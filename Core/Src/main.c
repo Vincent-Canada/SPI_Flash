@@ -91,50 +91,28 @@ int main(void)
   MX_SPI5_Init();
   /* USER CODE BEGIN 2 */
   W25qxx_Init();
-//  W25qxx_WaitForWriteEnd();
-//  	W25qxx_WriteStatusRegister(2,0);
-//	W25qxx_WaitForWriteEnd();
-//	HAL_Delay(1);
-//  Status=W25qxx_ReadStatusRegister(1);
-//  Status=W25qxx_ReadStatusRegister(2);
-//  Status=W25qxx_ReadStatusRegister(3);
-//  W25qxx_ReadPage(rBuffer, 0, 0, 256);
-//  HAL_Delay(1000);
-//  HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_RESET);
-//  temp[0]=0x06;
-//  HAL_SPI_Transmit(&hspi5, temp, 1, 100);
-//  HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
-//  HAL_Delay(1);
-//  HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_RESET);
-//  temp[0]=0x21;
-//  temp[1]=0x00;
-//  temp[2]=0x00;
-//  temp[3]=0x00;
-//  temp[4]=0x00;
-//  HAL_SPI_Transmit(&hspi5, temp, 5, 100);
-//  HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
-//  HAL_Delay(1000);
   for(uint16_t _i=0;_i<256;_i++)
   {
 	  wBuffer[_i]=_i;
   }
-//  W25qxx_ReadPage(rBuffer, 0, 0, 256);
+  W25qxx_ReadPage(rBuffer, 0, 0, 256);
+  W25qxx_EraseBlock(0);
+  W25qxx_ReadPage(rBuffer, 0, 0, 256);
+  W25qxx_WritePage(wBuffer, 0, 0, 256);
+  W25qxx_WritePage(wBuffer, 2, 0, 256);
+  W25qxx_WritePage(wBuffer, 4, 0, 256);
+  W25qxx_ReadPage(rBuffer, 0, 0, 256);
   W25qxx_ReadPage(rBuffer, 1, 0, 256);
-  W25qxx_EraseSector(1);
-//  W25qxx_EraseBlock(0);
-//  W25qxx_EraseChip();
-  W25qxx_ReadPage(rBuffer, 1, 0, 256);
-//  W25qxx_ReadPage(rBuffer, 256, 0, 256);
-//  W25qxx_ReadPage(rBuffer, 512, 0, 256);
-  W25qxx_WritePage(wBuffer, 1, 0, 256);
-//  W25qxx_WritePage(wBuffer, 256, 0, 256);
-//  W25qxx_WritePage(wBuffer, 512, 0, 256);
-  W25qxx_ReadPage(rBuffer, 1, 0, 256);
-//  W25qxx_ReadPage(rBuffer, 256, 0, 256);
-//  W25qxx_ReadPage(rBuffer, 512, 0, 256);
-//  W25qxx_ReadPage(rBuffer, 10, 0, 256);
-//  W25qxx_ReadPage(rBuffer, 100, 0, 256);
-//  W25qxx_ReadPage(rBuffer, 768, 0, 256);
+  W25qxx_ReadPage(rBuffer, 2, 0, 256);
+  W25qxx_ReadPage(rBuffer, 3, 0, 256);
+  W25qxx_ReadPage(rBuffer, 4, 0, 256);
+  W25qxx_EraseSector(0);
+  W25qxx_EraseSector(2);
+  W25qxx_EraseSector(4);
+  W25qxx_ReadPage(rBuffer, 0, 0, 256);
+  W25qxx_ReadPage(rBuffer, 2, 0, 256);
+  W25qxx_ReadPage(rBuffer, 4, 0, 256);
+  W25qxx_WritePage(wBuffer, 0, 0, 256);
   /* USER CODE END 2 */
 
   /* Infinite loop */

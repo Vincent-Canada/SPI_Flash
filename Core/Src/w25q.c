@@ -275,13 +275,16 @@ void W25qxx_EraseSector(uint32_t SectorAddr)
 	SectorAddr = SectorAddr * w25qxx.SectorSize;
   W25qxx_WriteEnable();
   HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_RESET);
-  W25qxx_Spi(0x21);
-	if(w25qxx.ID>=W25Q256)
-		W25qxx_Spi((SectorAddr & 0xFF000000) >> 24);
+  if(w25qxx.ID>=W25Q256)
+	  W25qxx_Spi(0x21);
+  else
+	  W25qxx_Spi(0x20);
+  if(w25qxx.ID>=W25Q256)
+	  W25qxx_Spi((SectorAddr & 0xFF000000) >> 24);
   W25qxx_Spi((SectorAddr & 0xFF0000) >> 16);
   W25qxx_Spi((SectorAddr & 0xFF00) >> 8);
   W25qxx_Spi(SectorAddr & 0xFF);
-	HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
+  HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
   W25qxx_WaitForWriteEnd();
 	#if (_W25QXX_DEBUG==1)
 	printf("w25qxx EraseSector done after %d ms\r\n",HAL_GetTick()-StartTime);
@@ -304,13 +307,16 @@ void W25qxx_EraseBlock(uint32_t BlockAddr)
 	BlockAddr = BlockAddr * w25qxx.SectorSize*16;
   W25qxx_WriteEnable();
   HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_RESET);
-  W25qxx_Spi(0xD8);
-	if(w25qxx.ID>=W25Q256)
-		W25qxx_Spi((BlockAddr & 0xFF000000) >> 24);
+  if(w25qxx.ID>=W25Q256)
+	  W25qxx_Spi(0xDC);
+  else
+	  W25qxx_Spi(0xD8);
+  if(w25qxx.ID>=W25Q256)
+	  W25qxx_Spi((BlockAddr & 0xFF000000) >> 24);
   W25qxx_Spi((BlockAddr & 0xFF0000) >> 16);
   W25qxx_Spi((BlockAddr & 0xFF00) >> 8);
   W25qxx_Spi(BlockAddr & 0xFF);
-	HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
+  HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
   W25qxx_WaitForWriteEnd();
 	#if (_W25QXX_DEBUG==1)
 	printf("w25qxx EraseBlock done after %d ms\r\n",HAL_GetTick()-StartTime);
@@ -357,14 +363,17 @@ void W25qxx_WriteByte(uint8_t pBuffer, uint32_t WriteAddr_inBytes)
 	W25qxx_WaitForWriteEnd();
   W25qxx_WriteEnable();
   HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_RESET);
-  W25qxx_Spi(0x02);
-	if(w25qxx.ID>=W25Q256)
-		W25qxx_Spi((WriteAddr_inBytes & 0xFF000000) >> 24);
+  if(w25qxx.ID>=W25Q256)
+	  W25qxx_Spi(0x12);
+  else
+	  W25qxx_Spi(0x02);
+  if(w25qxx.ID>=W25Q256)
+	  W25qxx_Spi((WriteAddr_inBytes & 0xFF000000) >> 24);
   W25qxx_Spi((WriteAddr_inBytes & 0xFF0000) >> 16);
   W25qxx_Spi((WriteAddr_inBytes & 0xFF00) >> 8);
   W25qxx_Spi(WriteAddr_inBytes & 0xFF);
   W25qxx_Spi(pBuffer);
-	HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
+  HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
   W25qxx_WaitForWriteEnd();
 	#if (_W25QXX_DEBUG==1)
 	printf("w25qxx WriteByte done after %d ms\r\n",HAL_GetTick()-StartTime);
@@ -389,15 +398,18 @@ void 	W25qxx_WritePage(uint8_t *pBuffer	,uint32_t Page_Address,uint32_t OffsetIn
 	W25qxx_WaitForWriteEnd();
   W25qxx_WriteEnable();
   HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_RESET);
-  W25qxx_Spi(0x02);
-	Page_Address = (Page_Address*w25qxx.PageSize)+OffsetInByte;
-	if(w25qxx.ID>=W25Q256)
-		W25qxx_Spi((Page_Address & 0xFF000000) >> 24);
+  if(w25qxx.ID>=W25Q256)
+	  W25qxx_Spi(0x12);
+  else
+	  W25qxx_Spi(0x02);
+  Page_Address = (Page_Address*w25qxx.PageSize)+OffsetInByte;
+  if(w25qxx.ID>=W25Q256)
+	  W25qxx_Spi((Page_Address & 0xFF000000) >> 24);
   W25qxx_Spi((Page_Address & 0xFF0000) >> 16);
   W25qxx_Spi((Page_Address & 0xFF00) >> 8);
   W25qxx_Spi(Page_Address&0xFF);
-	HAL_SPI_Transmit(&_W25QXX_SPI,pBuffer,NumByteToWrite_up_to_PageSize,100);
-	HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
+  HAL_SPI_Transmit(&_W25QXX_SPI,pBuffer,NumByteToWrite_up_to_PageSize,100);
+  HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_SET);
   W25qxx_WaitForWriteEnd();
 	#if (_W25QXX_DEBUG==1)
 	StartTime = HAL_GetTick()-StartTime;
@@ -506,7 +518,7 @@ void 	W25qxx_ReadByte(uint8_t *pBuffer,uint32_t Bytes_Address)
 	printf("w25qxx ReadByte at address %d begin...\r\n",Bytes_Address);
 	#endif
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_RESET);
-  W25qxx_Spi(0x0B);
+  W25qxx_Spi(0x0C);
 	if(w25qxx.ID>=W25Q256)
 		W25qxx_Spi((Bytes_Address & 0xFF000000) >> 24);
   W25qxx_Spi((Bytes_Address & 0xFF0000) >> 16);
@@ -531,7 +543,7 @@ void W25qxx_ReadBytes(uint8_t* pBuffer, uint32_t ReadAddr, uint32_t NumByteToRea
 	printf("w25qxx ReadBytes at Address:%d, %d Bytes  begin...\r\n",ReadAddr,NumByteToRead);
 	#endif
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_RESET);
-	W25qxx_Spi(0x0B);
+	W25qxx_Spi(0x0C);
 	if(w25qxx.ID>=W25Q256)
 		W25qxx_Spi((ReadAddr & 0xFF000000) >> 24);
   W25qxx_Spi((ReadAddr & 0xFF0000) >> 16);
@@ -575,7 +587,7 @@ void 	W25qxx_ReadPage(uint8_t *pBuffer,uint32_t Page_Address,uint32_t OffsetInBy
 	#endif
 	Page_Address = Page_Address*w25qxx.PageSize+OffsetInByte;
 	HAL_GPIO_WritePin(_W25QXX_CS_GPIO,_W25QXX_CS_PIN,GPIO_PIN_RESET);
-	W25qxx_Spi(0x0B);
+	W25qxx_Spi(0x0C);
 	if(w25qxx.ID>=W25Q256)
 		W25qxx_Spi((Page_Address & 0xFF000000) >> 24);
   W25qxx_Spi((Page_Address & 0xFF0000) >> 16);
